@@ -97,7 +97,8 @@ Coming soon.
 
 - [x] Form submission
 - [x] Lead input with Google Forms
-- [ ] AI qualification
+- [x] AI qualification
+- [x] Workflow routing
 - [ ] Lead storage
 - [ ] Automatic email
 - [ ] Telegram notification
