@@ -57,6 +57,7 @@ IF
 - Email notifications
 - Telegram notifications
 - Workflow automation
+- Webhook-based lead intake
 
 ---
 
