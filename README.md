@@ -100,7 +100,7 @@ Coming soon.
 - [x] AI qualification
 - [x] Workflow routing
 - [x] Lead storage with Google Sheets
-- [ ] Automatic email
+- [x] Automatic email
 - [ ] Telegram notification
 - [ ] AI score
 - [ ] Dashboard
