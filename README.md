@@ -99,7 +99,7 @@ Coming soon.
 - [x] Lead input with Google Forms
 - [x] AI qualification
 - [x] Workflow routing
-- [ ] Lead storage
+- [x] Lead storage with Google Sheets
 - [ ] Automatic email
 - [ ] Telegram notification
 - [ ] AI score
