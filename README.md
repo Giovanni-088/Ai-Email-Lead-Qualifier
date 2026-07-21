@@ -102,4 +102,4 @@ Coming soon.
 - [x] Lead storage with Google Sheets
 - [x] Automatic email
 - [x] Telegram notification
-- [ ] Dashboard
+- [x] Workflow error handling & logging
