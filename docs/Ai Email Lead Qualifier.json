@@ -1,0 +1,601 @@
+{
+  "name": "Ai Email Lead Qualifier",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        48
+      ],
+      "id": "49271bbe-f640-40cf-8fdb-2a2e52f3f335",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "dAZrmkw6DG3mOTRc",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1901222482,
+          "mode": "list",
+          "cachedResultName": "Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -112
+      ],
+      "id": "643089ab-36d7-456f-a497-8d12cb648a5b",
+      "name": "Lead Form",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "e7FcRaorRNOIUdEa",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7fadcdf5-63e4-4d4a-9d84-6c9c5edd77ae",
+              "leftValue": "={{$json.classification}}",
+              "rightValue": "HOT",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        -112
+      ],
+      "id": "77ff52e3-27a4-4981-9ddd-1654af9afc32",
+      "name": "If HOT"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1f6f2282-8eaf-4e4c-a538-e9e4f8fd1cda",
+              "leftValue": "={{$json.classification}}",
+              "rightValue": "WARM",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        32
+      ],
+      "id": "6ec734d2-c2fa-445f-aba0-4c0400013fae",
+      "name": "If WARM"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = JSON.parse($json.output);\n\nreturn [\n  {\n    json: data\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -112
+      ],
+      "id": "6e6137b3-33c7-4757-afb8-776d4d331307",
+      "name": "Normalize Output"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Qualifies Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Classification": "={{ $json.classification }}",
+            "Summary": "={{ $json.summary }}",
+            "Reason": "={{ $json.reason }}",
+            "Score": "={{ $json.score }}",
+            "Timestamp": "={{ $('Lead Form').item.json[\"Marca temporal\"] }}",
+            "Name": "={{ $('Lead Form').item.json.Name }}",
+            "Email ": "={{ $('Lead Form').item.json.Email }}",
+            "Company": "={{ $('Lead Form').item.json.Company }}",
+            "Position": "={{ $('Lead Form').item.json.Position }}",
+            "Message": "={{ $('Lead Form').item.json.Message }}",
+            "Budget": "={{ $('Lead Form').item.json.Budget }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email ",
+              "displayName": "Email ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Position",
+              "displayName": "Position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Classification",
+              "displayName": "Classification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        48
+      ],
+      "id": "3de0ac23-ba53-4160-9ed7-b82c1fdd7ec1",
+      "name": "Mapping",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wT5pwulKkiOulLAB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        224
+      ],
+      "id": "738ecd4b-dbf2-4944-9360-c38169f4594c",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "dAZrmkw6DG3mOTRc",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const raw = item.json.output;\n\n  try {\n    const parsed = JSON.parse(raw);\n    return { json: parsed };\n  } catch (e) {\n    return {\n      json: {\n        error: `JSON inválido: ${e.message}`,\n        raw_output: raw\n      }\n    };\n  }\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        32
+      ],
+      "id": "49d5c6c4-94e1-4d62-9071-cf7d7ec3f525",
+      "name": "Normalize AI Email"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Lead Information\n\nName: {{ $('Lead Form').item.json.Name }}\n\nEmail: {{ $('Lead Form').item.json.Email }}\n\nCompany: {{ $('Lead Form').item.json.Company }}\n\nPosition: {{ $('Lead Form').item.json.Position }}\n\nMessage: {{ $('Lead Form').item.json.Message }}\n\nBudget: {{ $('Lead Form').item.json.Budget }}\n\nClassification: {{ $('Normalize Output').item.json.classification }}\n\nScore: {{ $('Normalize Output').item.json.score }}\n\nWrite the personalized email.",
+        "options": {
+          "systemMessage": "You are a professional B2B Sales Representative.\n\nYour task is to write a personalized follow-up email after a lead submits an inquiry.\n\nUse the lead information naturally. Acknowledge their interest without repeating every detail. The email should feel human, warm, and professional.\n\nRequirements:\n\n- Write in the same language used by the lead.\n- Address the lead by their first name.\n- Mention the company only if it fits naturally.\n- Reference the lead's request without copying it.\n- Thank them for reaching out.\n- Tell them a specialist will contact them soon.\n- Keep the tone confident, friendly, and concise.\n- Do not exaggerate or make promises.\n- Do not invent information.\n- Do not use clichés, marketing buzzwords, or overly enthusiastic language.\n- Do not sound robotic.\n- Keep the email between 100 and 160 words.\n- Return ONLY valid JSON.\n\nReturn exactly this structure:\n\n{\n  \"subject\": \"...\",\n  \"body\": \"...\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1600,
+        32
+      ],
+      "id": "2a848677-da84-49c3-a726-0adf69c9ce2c",
+      "name": "AI Personalized Email",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6232d955-933d-4d46-8d70-8728229f8af8",
+              "leftValue": "={{ $json.Classification }}",
+              "rightValue": "HOT",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1104,
+        48
+      ],
+      "id": "ca589119-2da0-4d54-8e18-71cae440a9c8",
+      "name": "IsHOT?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Lead Information\n\nName: {{ $json.Name }}\n\nEmail: {{ $json.Email }}\n\nCompany: {{ $json.Company }}\n\nPosition: {{ $json.Position }}\n\nMessage: {{ $json.Message }}\n\nBudget: {{ $json.Budget }}\n\nAnalyze this lead and return the required JSON.",
+        "options": {
+          "systemMessage": "You are an AI Sales Lead Qualification Assistant.\n\nAnalyze incoming leads and classify them according to their sales potential.\n\nConsider:\n\n- Purchase intent\n- Budget\n- Decision-making authority\n- Business value\n- Urgency\n\nReturn ONLY a valid JSON object.\n\nDo not wrap the JSON in quotes.\n\nDo not escape the JSON.\n\nThe response must be a JSON object, not a string.\n\nExample:\n\n{\n  \"classification\":\"HOT\",\n  \"score\":90,\n  \"reason\":\"...\",\n  \"summary\":\"...\"\n}\n\nRules:\n\n- classification: HOT, WARM or COLD\n- score: integer from 0 to 100\n- reason: maximum 30 words\n- summary: maximum 40 words\n\nNever return markdown.\nNever explain your reasoning.\nNever add extra text.\nReturn JSON only."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "fb4a0305-a691-4b0a-a88a-eb09b4ab3c46",
+      "name": "AI Classification",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$('Lead Form').item.json.Email}}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2096,
+        32
+      ],
+      "id": "51b2741e-af3a-4991-b72f-7dc17a872915",
+      "name": "Personalized Email Sent",
+      "webhookId": "7f028689-8a15-478f-85c0-7d98759f73a6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GZDHHkRCuVCX5y0M",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "Chat_Id",
+        "text": "=🔥 New HOT Lead  \n\n👤 Name: {{$('Lead Form').item.json.Name}}\n\n🏢 Company: {{$('Lead Form').item.json.Company}}  \n\n💼 Position: {{$('Lead Form').item.json.Position}}  \n\n📧 Email: {{$('Lead Form').item.json.Email}}\n\n💰 Budget: ${{$('Lead Form').item.json.Budget}}  \n\n⭐ Score: {{$('Normalize Output').item.json.score}}/100  \n\n📊 Classification: {{$('Normalize Output').item.json.classification}}  \n\n📝 Reason: {{$('Normalize Output').item.json.reason}}  \n\n📄 Summary: {{$('Normalize Output').item.json.summary}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1648,
+        -176
+      ],
+      "id": "addc1c9d-9399-45d0-ad0b-548cfd776ea9",
+      "name": "HOT Lead Notification",
+      "webhookId": "c8a9eda7-6108-4740-a3fa-f39a3999a2c5",
+      "credentials": {
+        "telegramApi": {
+          "id": "lFjjV9MzaEINXjhY",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Classification",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Form": {
+      "main": [
+        [
+          {
+            "node": "AI Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If HOT": {
+      "main": [
+        [
+          {
+            "node": "Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If WARM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Output": {
+      "main": [
+        [
+          {
+            "node": "If HOT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If WARM": {
+      "main": [
+        [
+          {
+            "node": "Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapping": {
+      "main": [
+        [
+          {
+            "node": "IsHOT?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Personalized Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize AI Email": {
+      "main": [
+        [
+          {
+            "node": "Personalized Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Personalized Email": {
+      "main": [
+        [
+          {
+            "node": "Normalize AI Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IsHOT?": {
+      "main": [
+        [
+          {
+            "node": "AI Personalized Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HOT Lead Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Classification": {
+      "main": [
+        [
+          {
+            "node": "Normalize Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6a968696-6091-4783-ad4d-b039bc4bf22a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cdc94c11d11296766bda8a74a56501c92d54e18a7c163a84b69eafac0d3a3a70"
+  },
+  "nodeGroups": [],
+  "id": "eVtpOJDr7FnG0dXy",
+  "tags": []
+}
