@@ -9,30 +9,42 @@ Automate lead qualification using Artificial Intelligence. When a user submits a
 ## Architecture
 
 ```text
-Form
-   │
-   ▼
-n8n Webhook
-   │
-   ▼
-Validation
-   │
-   ▼
-Groq 
-   │
-   ▼
-Classification
-   │
-   ▼
-IF
-├── HOT
-│   ├── Google Sheets
-│   ├── Gmail
-│   └── Telegram
-├── WARM
-│   └── Google Sheets
-└── COLD
-    └── Google Sheets
+Google Form
+        │
+        ▼
+Google Sheets
+        │
+        ▼
+n8n
+        │
+        ▼
+Groq (Llama 3.3)
+        │
+        ▼
+JSON Parse
+        │
+        ▼
+Routing
+ ┌──────────────┬──────────────┬──────────────┐
+ ▼              ▼              ▼
+HOT           WARM          COLD
+ │              │              │
+ └──────────────┴──────────────┘
+               │
+               ▼
+Google Sheets (Qualified Leads)
+               │
+        ┌──────┴──────┐
+        ▼             ▼
+ Gmail SMTP     Telegram Bot
+
+Any Failure
+      │
+      ▼
+Error Trigger
+      │
+      ├── Workflow Errors (Google Sheets)
+      └── Telegram Alert
 ```
 
 ---

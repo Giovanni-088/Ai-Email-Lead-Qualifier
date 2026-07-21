@@ -7,30 +7,42 @@ Automatically qualify incoming leads using Artificial Intelligence.
 ## System Architecture
 
 ```text
-Form
-   │
-   ▼
-Webhook
-   │
-   ▼
-Validation
-   │
-   ▼
-OpenAI
-   │
-   ▼
-Classification
-   │
-   ▼
-IF
-├── HOT
-│   ├── Store Lead
-│   ├── Send Email
-│   └── Send Telegram Notification
-├── WARM
-│   └── Store Lead
-└── COLD
-    └── Store Lead
+Google Form
+        │
+        ▼
+Google Sheets
+        │
+        ▼
+n8n
+        │
+        ▼
+Groq (Llama 3.3)
+        │
+        ▼
+JSON Parse
+        │
+        ▼
+Routing
+ ┌──────────────┬──────────────┬──────────────┐
+ ▼              ▼              ▼
+HOT           WARM          COLD
+ │              │              │
+ └──────────────┴──────────────┘
+               │
+               ▼
+Google Sheets (Qualified Leads)
+               │
+        ┌──────┴──────┐
+        ▼             ▼
+ Gmail SMTP     Telegram Bot
+
+Any Failure
+      │
+      ▼
+Error Trigger
+      │
+      ├── Workflow Errors (Google Sheets)
+      └── Telegram Alert
 ```
 
 ## Components
