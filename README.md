@@ -96,6 +96,7 @@ Coming soon.
 ## Roadmap
 
 - [x] Form submission
+- [x] Lead input with Google Forms
 - [ ] AI qualification
 - [ ] Lead storage
 - [ ] Automatic email

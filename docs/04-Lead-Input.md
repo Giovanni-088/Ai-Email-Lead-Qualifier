@@ -6,7 +6,11 @@ Create the entry point for incoming leads and send the information to n8n throug
 
 ## Input Method
 
-The system will use an n8n Webhook Trigger to receive lead information.
+The system uses Google Forms to collect lead information.
+
+Each submission is automatically stored in Google Sheets.
+
+n8n monitors the spreadsheet and retrieves new rows as soon as they are created, triggering the lead qualification workflow.
 
 ## Lead Fields
 
