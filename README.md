@@ -101,6 +101,5 @@ Coming soon.
 - [x] Workflow routing
 - [x] Lead storage with Google Sheets
 - [x] Automatic email
-- [ ] Telegram notification
-- [ ] AI score
+- [x] Telegram notification
 - [ ] Dashboard
