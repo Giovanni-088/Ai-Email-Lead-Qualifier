@@ -95,7 +95,7 @@ Coming soon.
 
 ## Roadmap
 
-- [ ] Form submission
+- [x] Form submission
 - [ ] AI qualification
 - [ ] Lead storage
 - [ ] Automatic email
